@@ -32,6 +32,7 @@ const en: Record<string, string> = {
   desc_openrouter: "OpenRouter /credits remaining credits",
   desc_sub2api: "Sub2Api /usage remaining quota",
   desc_codex: "OpenAI Codex ChatGPT subscription usage",
+  desc_nous: "Nous Portal /api/billing/subscription remaining credits",
 
   // ── Provider support details ──
   support_model_found: "Found {provider} model",

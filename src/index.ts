@@ -25,6 +25,7 @@ import "./providers/moonshot.js";
 import "./providers/openrouter.js";
 import "./providers/sub2api.js";
 import "./providers/codex.js";
+import "./providers/nous.js";
 
 // ══════════════════════════════════════════════════════════════
 // Re-exports for tests
@@ -32,6 +33,11 @@ import "./providers/codex.js";
 export { extractRemaining, getSub2ApiUsageUrls } from "./providers/sub2api.js";
 export { extractMoonshotAvailableBalance } from "./providers/moonshot.js";
 export { extractOpenRouterRemaining } from "./providers/openrouter.js";
+export {
+  extractNousCreditsRemaining,
+  extractNousBalanceUsd,
+  isNousModel,
+} from "./providers/nous.js";
 export {
   normalizeBackendPayload,
   normalizeAppServerResponse,

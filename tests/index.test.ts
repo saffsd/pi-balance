@@ -5,6 +5,9 @@ import {
   extractRemaining,
   extractMoonshotAvailableBalance,
   extractOpenRouterRemaining,
+  extractNousCreditsRemaining,
+  extractNousBalanceUsd,
+  isNousModel,
   formatCodexUsageStatusline,
   getSub2ApiUsageUrls,
   normalizeAppServerResponse,
@@ -180,4 +183,40 @@ test("extractOpenRouterRemaining should return undefined when data is missing", 
   assert.equal(extractOpenRouterRemaining({ data: { total_usage: 50 } }), undefined);
   assert.equal(extractOpenRouterRemaining(undefined), undefined);
   assert.equal(extractOpenRouterRemaining(null), undefined);
+});
+
+test("extractNousCreditsRemaining parses Nous Portal subscription payload", () => {
+  assert.equal(
+    extractNousCreditsRemaining({
+      current: { tierId: "tier", monthlyCredits: "22", creditsRemaining: "12.432885981112" },
+    }),
+    12.432885981112,
+  );
+  assert.equal(extractNousCreditsRemaining({ current: { creditsRemaining: 5 } }), 5);
+  assert.equal(extractNousCreditsRemaining({ current: null }), undefined);
+  assert.equal(extractNousCreditsRemaining({}), undefined);
+  assert.equal(extractNousCreditsRemaining(undefined), undefined);
+  assert.equal(extractNousCreditsRemaining(null), undefined);
+});
+
+test("extractNousBalanceUsd parses Nous Portal billing state payload", () => {
+  assert.equal(extractNousBalanceUsd({ balanceUsd: "42.5" }), 42.5);
+  assert.equal(extractNousBalanceUsd({ balanceUsd: 0 }), 0);
+  assert.equal(extractNousBalanceUsd({ balanceUsd: null }), undefined);
+  assert.equal(extractNousBalanceUsd({}), undefined);
+  assert.equal(extractNousBalanceUsd(undefined), undefined);
+});
+
+test("isNousModel matches Nous provider ids and base urls", () => {
+  const model = (provider: string, baseUrl?: string) =>
+    ({ provider, baseUrl }) as Parameters<typeof isNousModel>[0];
+  assert.equal(isNousModel(model("nousresearch")), true);
+  assert.equal(isNousModel(model("nous-portal")), true);
+  assert.equal(isNousModel(model("nous-portal-api-key")), true);
+  assert.equal(
+    isNousModel(model("custom"), "https://inference-api.nousresearch.com/v1"),
+    true,
+  );
+  assert.equal(isNousModel(model("deepseek"), "https://api.deepseek.com"), false);
+  assert.equal(isNousModel(model("openrouter", "https://openrouter.ai/api/v1")), false);
 });

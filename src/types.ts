@@ -20,6 +20,7 @@ export const PROVIDER_KEYS = [
   "codex",
   "moonshot",
   "openrouter",
+  "nous",
 ] as const;
 
 export type ProviderKey = (typeof PROVIDER_KEYS)[number];
