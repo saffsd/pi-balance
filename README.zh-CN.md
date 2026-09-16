@@ -33,7 +33,7 @@ pi-balance 是 [pi 编码代理](https://github.com/earendil-works/pi-coding-age
 - ✅ **自动识别**当前使用的模型提供商
 - ✅ **事件驱动刷新** —— 每次对话结束后自动更新余额（并显示增减 ▲▼）
 - ✅ **切换即更新**—— 切换模型或提供商时立即刷新
-- ✅ **多提供商支持** —— DeepSeek、Moonshot/Kimi、OpenRouter、Sub2Api、OpenAI Codex 及兼容 API
+- ✅ **多提供商支持** —— DeepSeek、Moonshot/Kimi、OpenRouter、Sub2Api、OpenAI Codex、Nous Portal 及兼容 API
 - ✅ **余额接口零配置** —— 支持的余额接口可复用模型 headers
 - ✅ **优雅降级** —— 无法获取余额时自动隐藏，不干扰使用
 - ✅ **国际化支持** —— 简体中文与英文，支持 `/balance lang <zh-CN|en>` 切换
@@ -76,6 +76,7 @@ pi install ./
 | **兼容 API** | `/usage`、`/v1/usage` | $（美元）剩余额度 |
 | **OpenAI Codex** | ChatGPT Codex usage API / `codex app-server` | 5 小时与每周用量剩余额度 |
 | **OpenRouter** | `/v1/credits` | $（美元）剩余额度 |
+| **Nous Portal** | `/api/billing/subscription` + `/api/billing/state` | $（美元）订阅 + 充值额度 |
 
 > 扩展会根据你当前的模型配置自动检测所使用的提供商 —— 无需手动设置。
 
@@ -174,6 +175,7 @@ pi-balance/
 │       ├── deepseek.ts            # DeepSeek provider
 │       ├── moonshot.ts            # Moonshot/Kimi provider
 │       ├── openrouter.ts          # OpenRouter provider
+│       ├── nous.ts                # Nous Portal provider
 │       ├── sub2api.ts             # Sub2Api + 自动探测
 │       └── codex.ts               # OpenAI Codex + CLI 回退
 │   └── i18n/

@@ -33,7 +33,7 @@ pi-balance is an **extension** for the [pi coding agent](https://github.com/eare
 - ✅ **Auto-detects** your currently active model provider
 - ✅ **Event-driven refresh** — balance updates automatically after each conversation (with delta display ▲▼)
 - ✅ **Live updates** on provider/model switch
-- ✅ **Multi-provider support** — DeepSeek, Moonshot/Kimi, OpenRouter, Sub2Api, OpenAI Codex (and compatible APIs)
+- ✅ **Multi-provider support** — DeepSeek, Moonshot/Kimi, OpenRouter, Sub2Api, OpenAI Codex, Nous Portal (and compatible APIs)
 - ✅ **Zero configuration for balance APIs** — supported balance APIs work from existing model headers
 - ✅ **Graceful fallback** — quietly hides when balance info is unavailable
 - ✅ **i18n support** — English and Simplified Chinese, with `/balance lang <zh-CN|en>` command
@@ -76,6 +76,7 @@ Restart pi. You should see the balance indicator appear in the status bar once y
 | **Compatible APIs** | `/usage`, `/v1/usage` | $ (USD) remaining balance |
 | **OpenAI Codex** | ChatGPT Codex usage API / `codex app-server` | 5-hour and weekly usage remaining |
 | **OpenRouter** | `/v1/credits` | $ (USD) remaining credits |
+| **Nous Portal** | `/api/billing/subscription` + `/api/billing/state` | $ (USD) subscription + top-up credits |
 
 > The extension automatically detects which provider you're using based on your current model configuration — no manual setup required.
 
@@ -174,6 +175,7 @@ pi-balance/
 │       ├── deepseek.ts            # DeepSeek provider
 │       ├── moonshot.ts            # Moonshot/Kimi provider
 │       ├── openrouter.ts          # OpenRouter provider
+│       ├── nous.ts                # Nous Portal provider
 │       ├── sub2api.ts             # Sub2Api + auto-discovery
 │       └── codex.ts               # OpenAI Codex + CLI fallback
 │   └── i18n/
