@@ -48,6 +48,27 @@ export function extractNousBalanceUsd(payload: unknown): number | undefined {
 }
 
 /**
+ * Total available balance from the two Nous Portal billing payloads:
+ * subscription credits remaining plus any separate prepaid/top-up balance.
+ * When either payload is missing or yields no value (e.g. its endpoint
+ * failed), fall back to whichever value is available.
+ */
+export function combineNousBalances(
+  subscription: unknown,
+  state: unknown,
+): BalanceResult | undefined {
+  const creditsRemaining = extractNousCreditsRemaining(subscription);
+  const balanceUsd = extractNousBalanceUsd(state);
+
+  if (creditsRemaining !== undefined && balanceUsd !== undefined) {
+    return { amount: creditsRemaining + balanceUsd, unit: "$" };
+  }
+  if (creditsRemaining !== undefined) return { amount: creditsRemaining, unit: "$" };
+  if (balanceUsd !== undefined) return { amount: balanceUsd, unit: "$" };
+  return undefined;
+}
+
+/**
  * Build portal request headers.  The portal billing endpoints accept the same
  * portal-issued Bearer token used for the inference API, so reuse the resolved
  * auth header instead of forwarding every model header.
@@ -83,21 +104,11 @@ export const nousProvider: BalanceProvider = {
 
     const base = portalBaseUrl();
 
-    // Prefer subscription credits (what inference actually consumes);
-    // fall back to the prepaid/top-up balance.
+    // Total available balance: subscription credits remaining plus the
+    // separate prepaid/top-up balance; degrade to whichever is available.
     const subscription = await getJson(`${base}/api/billing/subscription`, headers, signal);
-    const creditsRemaining = extractNousCreditsRemaining(subscription);
-    if (creditsRemaining !== undefined) {
-      return { amount: creditsRemaining, unit: "$" };
-    }
-
     const state = await getJson(`${base}/api/billing/state`, headers, signal);
-    const balanceUsd = extractNousBalanceUsd(state);
-    if (balanceUsd !== undefined) {
-      return { amount: balanceUsd, unit: "$" };
-    }
-
-    return undefined;
+    return combineNousBalances(subscription, state);
   },
 
   getSupport(

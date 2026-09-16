@@ -36,6 +36,7 @@ export { extractOpenRouterRemaining } from "./providers/openrouter.js";
 export {
   extractNousCreditsRemaining,
   extractNousBalanceUsd,
+  combineNousBalances,
   isNousModel,
 } from "./providers/nous.js";
 export {

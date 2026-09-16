@@ -7,6 +7,7 @@ import {
   extractOpenRouterRemaining,
   extractNousCreditsRemaining,
   extractNousBalanceUsd,
+  combineNousBalances,
   isNousModel,
   formatCodexUsageStatusline,
   getSub2ApiUsageUrls,
@@ -205,6 +206,72 @@ test("extractNousBalanceUsd parses Nous Portal billing state payload", () => {
   assert.equal(extractNousBalanceUsd({ balanceUsd: null }), undefined);
   assert.equal(extractNousBalanceUsd({}), undefined);
   assert.equal(extractNousBalanceUsd(undefined), undefined);
+});
+
+// Trimmed fixtures matching the live Nous Portal billing API responses:
+// subscription → GET /api/billing/subscription, state → GET /api/billing/state.
+const nousSubscriptionPayload = {
+  context: "personal",
+  org: { id: "nas_organisation:id", slug: "slug", name: "Account", role: "OWNER" },
+  current: {
+    tierId: "tier-plus",
+    tierName: "Plus",
+    monthlyCredits: "22",
+    creditsRemaining: "2.01",
+    cycleEndsAt: "2026-10-04T03:40:13.000Z",
+    cancelAtPeriodEnd: false,
+    cancellationEffectiveAt: null,
+    pendingDowngradeTierName: null,
+    pendingDowngradeAt: null,
+  },
+  tiers: [],
+  canChangePlan: true,
+};
+
+const nousStatePayload = {
+  org: { id: "nas_organisation:id", slug: "slug", name: "Account", role: "OWNER" },
+  balanceUsd: "10",
+  cliBillingEnabled: true,
+  chargePresets: ["100", "250", "500"],
+  bounds: { minUsd: "5", maxUsd: "10000" },
+  subscriptionPastDue: false,
+  card: null,
+  autoReload: null,
+};
+
+test("combineNousBalances sums subscription credits and top-up balance", () => {
+  assert.deepEqual(combineNousBalances(nousSubscriptionPayload, nousStatePayload), {
+    amount: 12.01,
+    unit: "$",
+  });
+});
+
+test("combineNousBalances falls back to subscription credits when top-up state is missing", () => {
+  assert.deepEqual(combineNousBalances(nousSubscriptionPayload, undefined), {
+    amount: 2.01,
+    unit: "$",
+  });
+  assert.deepEqual(combineNousBalances(nousSubscriptionPayload, {}), {
+    amount: 2.01,
+    unit: "$",
+  });
+});
+
+test("combineNousBalances falls back to top-up balance when subscription payload is missing", () => {
+  assert.deepEqual(combineNousBalances(undefined, nousStatePayload), {
+    amount: 10,
+    unit: "$",
+  });
+  assert.deepEqual(combineNousBalances({}, nousStatePayload), {
+    amount: 10,
+    unit: "$",
+  });
+});
+
+test("combineNousBalances returns undefined when neither payload yields a balance", () => {
+  assert.equal(combineNousBalances(undefined, undefined), undefined);
+  assert.equal(combineNousBalances({}, {}), undefined);
+  assert.equal(combineNousBalances(null, null), undefined);
 });
 
 test("isNousModel matches Nous provider ids and base urls", () => {
