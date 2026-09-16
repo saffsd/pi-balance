@@ -32,7 +32,7 @@ const zhCN: Record<string, string> = {
   desc_openrouter: "OpenRouter /credits 剩余额度",
   desc_sub2api: "Sub2Api /usage 剩余额度",
   desc_codex: "OpenAI Codex ChatGPT 订阅用量",
-  desc_nous: "Nous Portal /api/billing/subscription 剩余额度",
+  desc_nous: "Nous Portal 订阅 + 充值额度",
 
   // ── Provider 支持详情 ──
   support_model_found: "已发现 {provider} 模型",
